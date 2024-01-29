@@ -29,10 +29,6 @@ const canvas = document.querySelector('#myCanvas');
 const colorContainer = document.querySelector('#color-container');
 const toolsContainer = document.querySelector('.tools');
 
-// set some predefine colors
-setColors(colorContainer);
-setTools(toolsContainer);
-
 // default canvas data -> canvas color, pen color and used tool
 preloadData("canvas", {
   "color": "rgb(0,0,0)",
@@ -40,4 +36,9 @@ preloadData("canvas", {
   "tool": "pencil"
 })
 
+// set some predefine colors
+setColors(colorContainer);
+setTools(toolsContainer);
+
+// run canvas -> main function
 runCanvas(canvas);
