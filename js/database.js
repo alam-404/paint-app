@@ -19,7 +19,11 @@ const preloadData = (key, value) => {
 // this function is to get canvas data
 const getCanvasData = (key) => {
     const data = getData('canvas');
-    if (Object.keys(data).includes(key)) return data[key];
+    const dataKeys = Object.keys(data);
+    if (dataKeys){
+        const hasData = dataKeys.includes(key);
+        if (hasData) return data[key];
+    }
 }
 // this function is to update canvas data
 const updateCanvasData = (key, value) => {
