@@ -1,11 +1,16 @@
+import runCanvas from './canvas';
 import setColors from './colors';
-import './style.css'
+import { preloadData } from './database';
+import '/style/style.css';
+import setTools from './tools';
 
 document.querySelector('#app').innerHTML = `
   <div>
     <h1>🎨 Paint</h1>
     <div class='container'>
-      <canvas id='myCanvas'></canvas>
+      <div>
+        <canvas id='myCanvas'></canvas>
+      </div>
       <div class='flex-column tools-bar'>
         <h5>Colors</h5>
         <div id='color-container'>
@@ -13,7 +18,6 @@ document.querySelector('#app').innerHTML = `
         <div class='tools-container'>
           <h5>Tools</h5>
           <div class='tools'>
-            <button class='tool'>✏️</button>
           </div>
         <div>
       </div>
@@ -23,15 +27,17 @@ document.querySelector('#app').innerHTML = `
 // get the elements
 const canvas = document.querySelector('#myCanvas');
 const colorContainer = document.querySelector('#color-container');
+const toolsContainer = document.querySelector('.tools');
 
 // set some predefine colors
 setColors(colorContainer);
+setTools(toolsContainer);
 
-const colorBox = document.querySelectorAll('.color-box');
+// default canvas data -> canvas color, pen color and used tool
+preloadData("canvas", {
+  "color": "rgb(0,0,0)",
+  "background": "rgb(255,255,255)",
+  "tool": "pencil"
+})
 
-for(let color of colorBox){
-  color.addEventListener('click', (e) => {
-    // console.log(e.target.style.backgroundColor)
-    const color = e?.target?.style.backgroundColor;
-  })
-}
+runCanvas(canvas);

@@ -1,3 +1,5 @@
+import { updateCanvasData } from "./database";
+
 const colors = [
     'rgb(0, 0, 0)',
     'rgb(255, 255, 255)',
@@ -21,9 +23,19 @@ const setColors = (parentElement) => {
         colorElements += colorBox;
     }
     parentElement.innerHTML = colorElements;
+    setListener(parentElement);
 }
 
-
+// set eventlistener to color box
+const setListener = (parentElement) => {
+    const colorBox = parentElement.querySelectorAll('.color-box')
+    for (let color of colorBox) {
+        color.addEventListener('click', (e) => {
+            const pencilColor = e?.target?.style.backgroundColor;
+            updateCanvasData('color', pencilColor);
+        })
+    }
+}
 
 
 export default setColors;
