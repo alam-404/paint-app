@@ -1,8 +1,8 @@
 import { getCanvasData } from "./database";
 
 const runCanvas = (canvas) => {
-    drawOnCanvas(canvas);
     readyCanvas(canvas);
+    mainCanvas(canvas);
 }
 
 // ready canvas to draw
@@ -17,76 +17,58 @@ const readyCanvas = (canvas) => {
 }
 
 // draw on canvas
-const drawOnCanvas = (canvas) => {
+const mainCanvas = (canvas) => {
     const ctx = canvas.getContext('2d');
-    let drawKeyPressed = 0, eraseKeyPressed = 0;
-    document.addEventListener('mousemove', (event) => {
+    canvas.addEventListener('mouseenter', () => {
         // set universal parameter
         canvas.canvas = canvas;
         canvas.ctx = ctx;
+
         // get selected tool from storage
         const tool = getCanvasData('tool');
-        // console.log(tool)
+
+        // check tools
         switch (tool) {
+            // draw
             case 'pencil':
-                drawKeyPressed = !drawKeyPressed;
-                canvas.removeEventListener('mousemove', eraseOnMouseMove, false);
-                canvas.addEventListener('mousemove', drawOnMouseMove, false);
+                drawOnKeyPressed(canvas);
                 break;
+
+            // erase
             case 'eraser':
-                canvas.removeEventListener('mousemove', drawOnMouseMove, false);
-                canvas.addEventListener('mousemove', eraseOnMouseMove, false);
-
+                eraseOnKeyPressed(canvas);
+                break;
         }
-        // check cases
-        // switch (event.key) {
-        //     // 'd' -> toggle draw and release
-        //     case 'd':
-        //         // console.log('dr', drawKeyPressed);
-        //         // eraseKeyPressed = !eraseKeyPressed ? eraseKeyPressed: eraseKeyPressed;
-        //         if (eraseKeyPressed) eraseKeyPressed = !eraseKeyPressed;
-        //         console.log(drawKeyPressed, eraseKeyPressed)
-        //         if (!drawKeyPressed) {
-        //             drawKeyPressed = !drawKeyPressed;
-        //             canvas.addEventListener('mousemove', drawOnMouseMove, false);
-        //         } else {
-        //             drawKeyPressed = !drawKeyPressed;
-        //             canvas.removeEventListener('mousemove', drawOnMouseMove, false);
-        //         }
-        //         break;
-
-        //     // 'e' -> toggle erase
-        //     case 'e':
-        //         // console.log("er", eraseKeyPressed)
-        //         if (drawKeyPressed) drawKeyPressed = !drawKeyPressed;
-        //         console.log(drawKeyPressed, eraseKeyPressed)
-        //         if (!eraseKeyPressed) {
-        //             eraseKeyPressed = !eraseKeyPressed;
-        //             // console.log('ed',drawKeyPressed);
-        //             canvas.addEventListener('mousemove', eraseOnMouseMove, false);
-        //         } else {
-        //             eraseKeyPressed = !eraseKeyPressed;
-        //             canvas.removeEventListener('mousemove', eraseOnMouseMove, false);
-        //         }
-        //         break;
-
-        //     case 'f':
-        //         console.log('F pressed')
-        //         break;
-        // }
-
     })
 }
 
 
 // draw on mousemove
-const drawOnMouseMove = (event) => {
+const drawOnMouseMove = (ParentEvent) => {
     // fetch parameter
-    const canvas = event.currentTarget.canvas;
-    const ctx = event.currentTarget.ctx;
-    // get the mouse position and draw
-    const { x, y } = getMousePosition(canvas, event)
+    const canvas = ParentEvent.currentTarget.canvas;
+    const ctx = ParentEvent.currentTarget.ctx;
+    const { x, y } = getMousePosition(canvas, ParentEvent);
     drawRect(ctx, x, y)
+}
+
+// draw on shift key pressed
+const drawOnKeyPressed = (canvas) => {
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key == "Shift") {
+            // get the mouse position and draw
+            canvas.removeEventListener('mousemove', eraseOnMouseMove, false);
+            canvas.addEventListener('mousemove', drawOnMouseMove, false);
+        }
+    });
+    document.addEventListener('keyup', (event) => {
+        if (event.key == "Shift") {
+            // get the mouse position and draw
+            canvas.removeEventListener('mousemove', eraseOnMouseMove, false);
+            canvas.removeEventListener('mousemove', drawOnMouseMove, false);
+        }
+    });
 }
 
 // erase on mousemove
@@ -99,6 +81,23 @@ const eraseOnMouseMove = (event) => {
     eraseRect(ctx, x, y)
 }
 
+// erase on shift key pressed
+const eraseOnKeyPressed = (canvas) => {
+    document.addEventListener('keydown', (event) => {
+        if (event.key == "Shift") {
+            // get the mouse position and draw
+            canvas.removeEventListener('mousemove', drawOnMouseMove, false);
+            canvas.addEventListener('mousemove', eraseOnMouseMove, false);
+        }
+    });
+    document.addEventListener('keyup', (event) => {
+        if (event.key == "Shift") {
+            // get the mouse position and draw
+            canvas.removeEventListener('mousemove', eraseOnMouseMove, false);
+            canvas.removeEventListener('mousemove', drawOnMouseMove, false);
+        }
+    });
+}
 
 // draw rectangle on canvas
 const drawRect = (ctx, x, y) => {
